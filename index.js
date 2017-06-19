@@ -11,8 +11,12 @@ module.exports = robot => {
         if (!context.payload.body) {
             issue = (await context.github.issues.get(context.issue())).data;
         }
+        //Look into body in issue_comment event,
+        //It appears to be analyzing the main body of the original issue
+        //As opposed to the body of the comment
         var body = context.payload.issue.body;
         robot.log(body);
+        
         if (mean_words.some(function(i) { return body.indexOf(i) >= 0; })) {
             robot.log("There's a mean word in here!");
             const params = context.issue({body: 'Try to say nice things!'})
