@@ -6,6 +6,10 @@
   "scripts": {
     "test": "test"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "hiimbex",
+  "license": "ISC",
+  "dependencies": {
+    "localtunnel": "^1.8.3",
+    "probot": "^0.7.1"
+  }
 }
