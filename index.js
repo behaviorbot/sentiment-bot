@@ -4,21 +4,17 @@ module.exports = robot => {
     robot.on('issues', check);
     robot.on('issue_comment', check);
     robot.on('pull_request', check);
-
-    //robot.on('issues', async context => {
     async function check(context) {
-        //const mean_words = ["stupid", "idiot", "fuck"];
         //This is used to compare to the data we get from the Perspective API
         const toxicity_low_threshold = .5;
         const toxicity_high_threshold = .8;
+
         robot.log(context.payload);
         let context_issue = context.payload.issue || context.payload.pull_request;
         if (!context.payload.issue) {
             context_issue = (await context.github.issues.get(context.issue())).data;
         }
-        //Look into body in issue_comment event,
-        //It appears to be analyzing the main body of the original issue
-        //As opposed to the body of the comment\
+
         if (context.payload.comment) {
             //robot.log("this is actually a comment!");
             var body = context.payload.comment.body;
@@ -42,6 +38,7 @@ module.exports = robot => {
                 //robot.log(JSON.stringify(response, null, 2));
                 var toxic_value = response.attributeScores.TOXICITY.spanScores[0].score.value
                 robot.log(toxic_value);
+
                 if (toxic_value >= toxicity_high_threshold) {
                     robot.log("That comment was very toxic.");
                     var template = 'That comment was very toxic!';
@@ -55,13 +52,5 @@ module.exports = robot => {
                 }
             });
         });
-        
-        // if (mean_words.some(function(i) { return body.indexOf(i) >= 0; })) {
-        //     robot.log("There's a mean word in here!");
-        //     const params = context.issue({body: 'Try to say nice things!'})
-        //     return context.github.issues.createComment(params);
-        // } else {
-        //     robot.log("There were no means words in here!")
-        // }
     };
 };
