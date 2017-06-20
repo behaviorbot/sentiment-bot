@@ -9,7 +9,9 @@
   "author": "hiimbex",
   "license": "ISC",
   "dependencies": {
+    "googleapis": "^19.0.0",
     "localtunnel": "^1.8.3",
-    "probot": "^0.7.1"
+    "probot": "^0.7.1",
+    "request": "^2.81.0"
   }
 }
