@@ -1,0 +1,28 @@
+{
+    "event": "issue_comment",
+    "payload": {
+        "action": "created",
+        "issue": {
+            "number": 21,
+            "user": {
+                "login": "hiimbex"
+            },
+            "title": "This is a pr"
+        },
+        "repository": {
+            "name": "testing-things",
+            "owner": {
+                "login": "hiimbex"
+            }
+        },
+        "comment": {
+            "body": "gr im grumpy and toxic and mean and i hate being a good person! anger"
+        },
+        "installation": {
+            "id": 35029
+        },
+        "sender": {
+          "type": "user"
+        }
+    }
+}
