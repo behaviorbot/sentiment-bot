@@ -1,45 +1,44 @@
-//let googleapis = require('googleapis');
-const yaml = require('js-yaml');
+const googleapis = require('googleapis');
 
 module.exports = robot => {
     robot.on('issue_comment', async context => {
-        let config, toxicityThreshold;
-        try {
-            const options = context.repo({path: '.github/config.yml'});
-            const response = await context.github.repos.getContent(options);
-            config = yaml.load(Buffer.from(response.data.content, 'base64').toString()) || {};
-        } catch (err) {
-            if (err.code !== 404) throw err;
-        }
-        if (config) toxicityThreshold = config.sentimentBotToxicityThreshold;
-        //console.log(toxicityThreshold, config.sentimentBotToxicityThreshold);
-        const body = context.payload.comment.body;
-        const codeOfConduct = await context.github.codeOfConduct.getRepoCodeOfConduct(context.repo());
-        robot.log(body, toxicityThreshold, codeOfConduct);
-        //attempt to make perspective api requests template from google
-        discovery_url = 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
-        console.log('in index.js, this is googleapis: ', googleapis);
-        console.log('in index.js, this is googleapis.discoverAPI: ', googleapis.discoverAPI);
-        googleapis.discoverAPI(discovery_url, (err, client) => {
-            console.log('in the thing!!! here\'s the client: ', client);
-            console.log('error: ', err);
-            if (err) throw err;
-            var analyze_request = {
-                comment: {'text': body},
-                requestedAttributes: {'TOXICITY': {}}
-            };
-            client.comments.analyze({key: process.env.PERSPECTIVE_API_KEY, resource: analyze_request}, (err, response) => {
-                console.log('response');
-                if (err) throw err;
-                var toxic_value = response.attributeScores.TOXICITY.spanScores[0].score.value
-                robot.log(toxic_value);
-                console.log(toxic_value);
-                if (toxic_value >= toxicityThreshold) {
-                    // Check for Code of Conduct
-                    robot.log(config.sentimentBotReplyComment);
-                    context.github.issues.createComment(context.issue({body: config.sentimentBotReplyComment}));
+        let codeOfConduct;
+        const config = await context.config('config.yml');
+        if (config && config.sentimentBotToxicityThreshold && config.sentimentBotReplyComment && !context.isBot) {
+            const toxicityThreshold = config.sentimentBotToxicityThreshold;
+            const body = context.payload.comment.body;
+            // Check for Code of Conduct
+            const repoData = await context.github.repos.get(context.repo());
+            if (repoData.data.code_of_conduct) {
+                codeOfConduct = Object.assign({}, repoData.data.code_of_conduct);
+            }
+            // Attempt to make perspective api requests template from google
+            const discoveryUrl = 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
+            googleapis.discoverAPI(discoveryUrl, (err, client) => {
+                if (err) {
+                    throw err;
                 }
+                const analyzeRequest = {
+                    comment: {text: body},
+                    requestedAttributes: {TOXICITY: {}}
+                };
+                client.comments.analyze({key: process.env.PERSPECTIVE_API_KEY, resource: analyzeRequest}, (err, response) => {
+                    if (err) {
+                        throw err;
+                    }
+                    const toxicValue = response.attributeScores.TOXICITY.spanScores[0].score.value;
+                    // If the comment is toxic, comment the comment
+                    if (toxicValue >= toxicityThreshold) {
+                        let comment;
+                        if (codeOfConduct) {
+                            comment = config.sentimentBotReplyComment + 'Keep in mind, this repository uses the [' + codeOfConduct.name + '](' + codeOfConduct.url + ').';
+                        } else {
+                            comment = config.sentimentBotReplyComment;
+                        }
+                        context.github.issues.createComment(context.issue({body: comment}));
+                    }
+                });
             });
-        });
+        }
     });
 };

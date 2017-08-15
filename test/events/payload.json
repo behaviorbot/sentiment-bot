@@ -16,10 +16,13 @@
             }
         },
         "comment": {
-            "body": "gr im grumpy and toxic and mean and i hate being a good person!"
+            "body": "gr im grumpy and toxic and mean and i hate being a good person! anger"
         },
         "installation": {
             "id": 35029
+        },
+        "sender": {
+          "type": "user"
         }
     }
 }
