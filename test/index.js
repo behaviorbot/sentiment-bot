@@ -44,9 +44,13 @@ describe('sentiment-bot', () => {
                 repo: 'testing-things',
                 path: '.github/config.yml'
             });
+            expect(github.repos.get).toHaveBeenCalled();
             expect(github.repos.get).toHaveBeenCalledWith({
                 owner: 'hiimbex',
-                repo: 'testing-things'
+                repo: 'testing-things',
+                headers: {
+                    Accept: 'application/vnd.github.scarlet-witch-preview+json'
+                }
             });
             // Imitate google api stuff
             // expect(github.issues.createComment).toHaveBeenCalled();
@@ -64,7 +68,10 @@ describe('sentiment-bot', () => {
             });
             expect(github.repos.get).toHaveBeenCalledWith({
                 owner: 'hiimbex',
-                repo: 'testing-things'
+                repo: 'testing-things',
+                headers: {
+                    Accept: 'application/vnd.github.scarlet-witch-preview+json'
+                }
             });
             expect(github.issues.createComment).toNotHaveBeenCalled();
         });

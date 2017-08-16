@@ -8,7 +8,11 @@ module.exports = robot => {
             const toxicityThreshold = config.sentimentBotToxicityThreshold;
             const body = context.payload.comment.body;
             // Check for Code of Conduct
-            const repoData = await context.github.repos.get(context.repo());
+            const repoData = await context.github.repos.get(context.repo({
+                headers: {
+                    Accept: 'application/vnd.github.scarlet-witch-preview+json'
+                }
+            }));
             if (repoData.data.code_of_conduct) {
                 codeOfConduct = Object.assign({}, repoData.data.code_of_conduct);
             }
