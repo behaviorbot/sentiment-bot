@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "probot run ./index.js",
-    "test": "mocha && xo --extend eslint-config-probot"
+    "test": "mocha && standard"
   },
   "repository": {
     "type": "git",
@@ -24,17 +24,19 @@
     "request": "^2.81.0"
   },
   "devDependencies": {
-    "eslint-config-probot": "^0.1.0",
+    "eslint-plugin-import": "^2.7.0",
     "expect": "^1.20.2",
     "localtunnel": "^1.8.3",
     "mocha": "^3.4.2",
-    "xo": "^0.18.2"
-  },
-  "xo": {
-    "space": 2
+    "standard": "^10.0.3"
   },
   "engines": {
     "node": ">= 7.7.0",
     "npm": ">= 4.0.0"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
   }
 }

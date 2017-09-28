@@ -1,15 +1,15 @@
-const expect = require('expect');
-const {createRobot} = require('probot');
-const plugin = require('..');
-const payload = require('./events/payload');
+const expect = require('expect')
+const {createRobot} = require('probot')
+const plugin = require('..')
+const payload = require('./events/payload')
 
 describe('sentiment-bot', () => {
-  let robot;
-  let github;
+  let robot
+  let github
 
   beforeEach(() => {
-    robot = createRobot();
-    plugin(robot);
+    robot = createRobot()
+    plugin(robot)
 
     github = {
       repos: {
@@ -31,49 +31,49 @@ describe('sentiment-bot', () => {
       issues: {
         createComment: expect.createSpy()
       }
-    };
+    }
 
-    robot.auth = () => Promise.resolve(github);
-  });
+    robot.auth = () => Promise.resolve(github)
+  })
 
   describe('sentiment-bot success', () => {
     it('posts a comment because the user was toxic', async () => {
-      await robot.receive(payload);
+      await robot.receive(payload)
       expect(github.repos.getContent).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
-      });
-      expect(github.repos.get).toHaveBeenCalled();
+      })
+      expect(github.repos.get).toHaveBeenCalled()
       expect(github.repos.get).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         headers: {
           Accept: 'application/vnd.github.scarlet-witch-preview+json'
         }
-      });
+      })
       // Imitate google api stuff
       // expect(github.issues.createComment).toHaveBeenCalled();
-    });
-  });
+    })
+  })
 
   describe('sentiment-bot fail', () => {
     it('does not post a comment because the user was not toxic', async () => {
-      await robot.receive(payload);
+      await robot.receive(payload)
 
       expect(github.repos.getContent).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
-      });
+      })
       expect(github.repos.get).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         headers: {
           Accept: 'application/vnd.github.scarlet-witch-preview+json'
         }
-      });
-      expect(github.issues.createComment).toNotHaveBeenCalled();
-    });
-  });
-});
+      })
+      expect(github.issues.createComment).toNotHaveBeenCalled()
+    })
+  })
+})
