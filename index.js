@@ -35,7 +35,7 @@ module.exports = robot => {
             // If the comment is toxic, comment the comment
             if (toxicValue >= toxicityThreshold) {
               let comment
-              if (codeOfConduct) {
+              if (codeOfConduct && codeOfConduct.name && codeOfConduct.url) {
                 comment = config.sentimentBotReplyComment + 'Keep in mind, this repository uses the [' + codeOfConduct.name + '](' + codeOfConduct.url + ').'
               } else {
                 comment = config.sentimentBotReplyComment
