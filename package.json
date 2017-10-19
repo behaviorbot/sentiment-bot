@@ -20,7 +20,7 @@
   "dependencies": {
     "googleapis": "^19.0.0",
     "js-yaml": "^3.9.0",
-    "probot": "^0.9.1",
+    "probot": "^3.0.0",
     "request": "^2.81.0"
   },
   "devDependencies": {
