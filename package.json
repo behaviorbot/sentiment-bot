@@ -19,7 +19,7 @@
   "homepage": "https://github.com/behaviorbot/sentiment-bot#readme",
   "dependencies": {
     "js-yaml": "^3.9.0",
-    "perspective-api-client": "^1.0.0",
+    "perspective-api-client": "^1.1.0",
     "probot": "^3.0.0",
     "request": "^2.81.0"
   },
