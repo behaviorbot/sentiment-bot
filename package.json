@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/behaviorbot/sentiment-bot#readme",
   "dependencies": {
-    "googleapis": "^19.0.0",
     "js-yaml": "^3.9.0",
+    "perspective-api-client": "^1.0.0",
     "probot": "^3.0.0",
     "request": "^2.81.0"
   },
