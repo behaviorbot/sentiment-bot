@@ -1,6 +1,7 @@
-const googleapis = require('googleapis')
+const Perspective = require('perspective-api-client')
 
 module.exports = robot => {
+  robot.perspective = new Perspective(({apiKey: process.env.PERSPECTIVE_API_KEY}))
   robot.on('issue_comment', async context => {
     let codeOfConduct
     const config = await context.config('config.yml')
@@ -17,33 +18,18 @@ module.exports = robot => {
         if (repoData.data.code_of_conduct) {
           codeOfConduct = Object.assign({}, repoData.data.code_of_conduct)
         }
-        // Attempt to make perspective api requests template from google
-        const discoveryUrl = 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1'
-        googleapis.discoverAPI(discoveryUrl, (err, client) => {
-          if (err) {
-            throw err
+        const response = await robot.perspective.analyze(body, {truncate: true})
+        const toxicValue = response.attributeScores.TOXICITY.spanScores[0].score.value
+        // If the comment is toxic, comment the comment
+        if (toxicValue >= toxicityThreshold) {
+          let comment
+          if (codeOfConduct && codeOfConduct.name && codeOfConduct.url) {
+            comment = config.sentimentBotReplyComment + 'Keep in mind, this repository uses the [' + codeOfConduct.name + '](' + codeOfConduct.url + ').'
+          } else {
+            comment = config.sentimentBotReplyComment
           }
-          const analyzeRequest = {
-            comment: {text: body},
-            requestedAttributes: {TOXICITY: {}}
-          }
-          client.comments.analyze({key: process.env.PERSPECTIVE_API_KEY, resource: analyzeRequest}, (err, response) => {
-            if (err) {
-              throw err
-            }
-            const toxicValue = response.attributeScores.TOXICITY.spanScores[0].score.value
-            // If the comment is toxic, comment the comment
-            if (toxicValue >= toxicityThreshold) {
-              let comment
-              if (codeOfConduct && codeOfConduct.name && codeOfConduct.url) {
-                comment = config.sentimentBotReplyComment + 'Keep in mind, this repository uses the [' + codeOfConduct.name + '](' + codeOfConduct.url + ').'
-              } else {
-                comment = config.sentimentBotReplyComment
-              }
-              context.github.issues.createComment(context.issue({body: comment}))
-            }
-          })
-        })
+          context.github.issues.createComment(context.issue({body: comment}))
+        }
       }
     }
   })
