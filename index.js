@@ -19,7 +19,7 @@ module.exports = robot => {
           codeOfConduct = Object.assign({}, repoData.data.code_of_conduct)
         }
         const response = await robot.perspective.analyze(body, {truncate: true})
-        const toxicValue = response.attributeScores.TOXICITY.spanScores[0].score.value
+        const toxicValue = response.attributeScores.TOXICITY.summaryScore.value
         // If the comment is toxic, comment the comment
         if (toxicValue >= toxicityThreshold) {
           let comment
