@@ -9,7 +9,8 @@ You can tell from this example just how toxic I am 😜
 
 1. Install the bot on the intended repositories. The plugin requires the following **Permissions and Events**:
 - Issues: **Read & Write**
-  - [x] check the box for **Issue Comment** events
+  - **Issue Comment** events
+- Organization members: **Read** (necessary to tag teams, i.e. cc/ @behaviorbot/moderators)
 2. Add a `.github/config.yml` file that contains the following:
 
 ```yml
