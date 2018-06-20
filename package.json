@@ -20,7 +20,7 @@
   "dependencies": {
     "js-yaml": "^3.9.0",
     "perspective-api-client": "^2.0.0",
-    "probot": "^6.1.0",
+    "probot": "^6.2.0",
     "request": "^2.81.0"
   },
   "devDependencies": {
