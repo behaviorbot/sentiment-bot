@@ -1,12 +1,12 @@
 const expect = require('expect')
-const {createRobot} = require('probot')
+const {Application} = require('probot')
 const plugin = require('..')
 const payload = require('./events/payload')
 
 const createTestRobot = ({toxicity}) => {
   // PERSPECTIVE_API_KEY must be set
   process.env.PERSPECTIVE_API_KEY = 'mock-key'
-  const robot = createRobot()
+  const robot = new Application()
   plugin(robot)
 
   const github = {
