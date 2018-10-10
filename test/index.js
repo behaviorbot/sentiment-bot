@@ -3,11 +3,11 @@ const {Application} = require('probot')
 const plugin = require('..')
 const payload = require('./events/payload')
 
-const createTestRobot = ({toxicity}) => {
+const createTestApp = ({toxicity}) => {
   // PERSPECTIVE_API_KEY must be set
   process.env.PERSPECTIVE_API_KEY = 'mock-key'
-  const robot = new Application()
-  plugin(robot)
+  const app = new Application()
+  plugin(app)
 
   const github = {
     repos: {
@@ -60,18 +60,18 @@ const createTestRobot = ({toxicity}) => {
     ))
   }
 
-  robot.auth = () => Promise.resolve(github)
-  robot.perspective = perspective
-  return robot
+  app.auth = () => Promise.resolve(github)
+  app.perspective = perspective
+  return app
 }
 
 describe('sentiment-bot', () => {
   describe('sentiment-bot success', () => {
     it('posts a comment because the user was toxic', async () => {
-      const robot = createTestRobot({toxicity: 0.8})
-      const github = await robot.auth()
-      const perspective = robot.perspective
-      await robot.receive(payload)
+      const app = createTestApp({toxicity: 0.8})
+      const github = await app.auth()
+      const perspective = app.perspective
+      await app.receive(payload)
       expect(github.repos.getContent).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
@@ -92,10 +92,10 @@ describe('sentiment-bot', () => {
 
   describe('sentiment-bot fail', () => {
     it('does not post a comment because the user was not toxic', async () => {
-      const robot = createTestRobot({toxicity: 0.2})
-      const github = await robot.auth()
-      const perspective = robot.perspective
-      await robot.receive(payload)
+      const app = createTestApp({toxicity: 0.2})
+      const github = await app.auth()
+      const perspective = app.perspective
+      await app.receive(payload)
 
       expect(github.repos.getContent).toHaveBeenCalledWith({
         owner: 'hiimbex',
