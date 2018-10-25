@@ -1,7 +1,7 @@
 const Perspective = require('perspective-api-client')
 
 module.exports = app => {
-  app.perspective = new Perspective(({apiKey: process.env.PERSPECTIVE_API_KEY}))
+  app.perspective = new Perspective(({ apiKey: process.env.PERSPECTIVE_API_KEY }))
   app.on('issue_comment', async context => {
     let codeOfConduct
     const config = await context.config('config.yml')
@@ -18,7 +18,7 @@ module.exports = app => {
         if (repoData.data.code_of_conduct) {
           codeOfConduct = Object.assign({}, repoData.data.code_of_conduct)
         }
-        const response = await app.perspective.analyze(body, {truncate: true})
+        const response = await app.perspective.analyze(body, { truncate: true })
         const toxicValue = response.attributeScores.TOXICITY.summaryScore.value
         // If the comment is toxic, comment the comment
         if (toxicValue >= toxicityThreshold) {
@@ -28,7 +28,7 @@ module.exports = app => {
           } else {
             comment = config.sentimentBotReplyComment
           }
-          context.github.issues.createComment(context.issue({body: comment}))
+          context.github.issues.createComment(context.issue({ body: comment }))
         }
       }
     }
