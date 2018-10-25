@@ -1,9 +1,9 @@
 const expect = require('expect')
-const {Application} = require('probot')
+const { Application } = require('probot')
 const plugin = require('..')
 const payload = require('./events/payload')
 
-const createTestApp = ({toxicity}) => {
+const createTestApp = ({ toxicity }) => {
   // PERSPECTIVE_API_KEY must be set
   process.env.PERSPECTIVE_API_KEY = 'mock-key'
   const app = new Application()
@@ -68,7 +68,7 @@ const createTestApp = ({toxicity}) => {
 describe('sentiment-bot', () => {
   describe('sentiment-bot success', () => {
     it('posts a comment because the user was toxic', async () => {
-      const app = createTestApp({toxicity: 0.8})
+      const app = createTestApp({ toxicity: 0.8 })
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
@@ -92,7 +92,7 @@ describe('sentiment-bot', () => {
 
   describe('sentiment-bot fail', () => {
     it('does not post a comment because the user was not toxic', async () => {
-      const app = createTestApp({toxicity: 0.2})
+      const app = createTestApp({ toxicity: 0.2 })
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
