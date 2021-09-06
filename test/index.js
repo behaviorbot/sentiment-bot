@@ -3,7 +3,7 @@ const { Application } = require('probot')
 const plugin = require('..')
 const payload = require('./events/payload')
 
-const createTestApp = ({ toxicity }) => {
+const createTestApp = ({ toxicity, isPrivate = false, isFork = false }) => {
   // PERSPECTIVE_API_KEY must be set
   process.env.PERSPECTIVE_API_KEY = 'mock-key'
   const app = new Application()
@@ -20,9 +20,15 @@ const createTestApp = ({ toxicity }) => {
       })),
       get: expect.createSpy().andReturn(Promise.resolve({
         data: {
-          code_of_conduct: Buffer.from(`
-            name: 'Contributor Covenenant'
-            url: https://github.com/hiimbex/testing-things/blob/master/CODE_OF_CONDUCT.md`).toString('base64')
+          private: isPrivate,
+          fork: isFork
+        }
+      })),
+      getCommunityProfileMetrics: expect.createSpy().andReturn(Promise.resolve({
+        data: {
+          code_of_conduct_file: Buffer.from(`
+            url: https://api.github.com/repos/hiimbex/testing-things/contents/CODE_OF_CONDUCT.md,
+            html_url: https://github.com/hiimbex/testing-things/blob/master/CODE_OF_CONDUCT.md`).toString('base64')
         }
       }))
     },
@@ -66,6 +72,46 @@ const createTestApp = ({ toxicity }) => {
 }
 
 describe('sentiment-bot', () => {
+  describe('code of conduct', () => {
+    it('does not fetch CoC for private repo', async () => {
+      const app = createTestApp({ toxicity: 0.8, isPrivate: true })
+      const github = await app.auth()
+      const perspective = app.perspective
+      await app.receive(payload)
+      expect(github.repos.getContent).toHaveBeenCalledWith({
+        owner: 'hiimbex',
+        repo: 'testing-things',
+        path: '.github/config.yml'
+      })
+      expect(github.repos.get).toHaveBeenCalled({
+        owner: 'hiimbex',
+        repo: 'testing-things'
+      })
+      expect(github.repos.getCommunityProfileMetrics).toNotHaveBeenCalled()
+      expect(perspective.analyze).toHaveBeenCalled()
+      expect(github.issues.createComment).toHaveBeenCalled()
+    })
+
+    it('does not fetch CoC for forked repo', async () => {
+      const app = createTestApp({ toxicity: 0.8, isFork: true })
+      const github = await app.auth()
+      const perspective = app.perspective
+      await app.receive(payload)
+      expect(github.repos.getContent).toHaveBeenCalledWith({
+        owner: 'hiimbex',
+        repo: 'testing-things',
+        path: '.github/config.yml'
+      })
+      expect(github.repos.get).toHaveBeenCalled({
+        owner: 'hiimbex',
+        repo: 'testing-things'
+      })
+      expect(github.repos.getCommunityProfileMetrics).toNotHaveBeenCalled()
+      expect(perspective.analyze).toHaveBeenCalled()
+      expect(github.issues.createComment).toHaveBeenCalled()
+    })
+  })
+
   describe('sentiment-bot success', () => {
     it('posts a comment because the user was toxic', async () => {
       const app = createTestApp({ toxicity: 0.8 })
@@ -77,13 +123,13 @@ describe('sentiment-bot', () => {
         repo: 'testing-things',
         path: '.github/config.yml'
       })
-      expect(github.repos.get).toHaveBeenCalled()
-      expect(github.repos.get).toHaveBeenCalledWith({
+      expect(github.repos.get).toHaveBeenCalled({
         owner: 'hiimbex',
-        repo: 'testing-things',
-        headers: {
-          Accept: 'application/vnd.github.scarlet-witch-preview+json'
-        }
+        repo: 'testing-things'
+      })
+      expect(github.repos.getCommunityProfileMetrics).toHaveBeenCalledWith({
+        owner: 'hiimbex',
+        repo: 'testing-things'
       })
       expect(perspective.analyze).toHaveBeenCalled()
       expect(github.issues.createComment).toHaveBeenCalled()
@@ -102,12 +148,13 @@ describe('sentiment-bot', () => {
         repo: 'testing-things',
         path: '.github/config.yml'
       })
-      expect(github.repos.get).toHaveBeenCalledWith({
+      expect(github.repos.get).toHaveBeenCalled({
         owner: 'hiimbex',
-        repo: 'testing-things',
-        headers: {
-          Accept: 'application/vnd.github.scarlet-witch-preview+json'
-        }
+        repo: 'testing-things'
+      })
+      expect(github.repos.getCommunityProfileMetrics).toHaveBeenCalledWith({
+        owner: 'hiimbex',
+        repo: 'testing-things'
       })
       expect(perspective.analyze).toHaveBeenCalled()
       expect(github.issues.createComment).toNotHaveBeenCalled()
