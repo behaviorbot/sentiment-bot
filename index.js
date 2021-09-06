@@ -9,22 +9,22 @@ module.exports = app => {
       if (config.sentimentBotToxicityThreshold && config.sentimentBotReplyComment) {
         const toxicityThreshold = config.sentimentBotToxicityThreshold
         const body = context.payload.comment.body
-        // Check for Code of Conduct
-        const repoData = await context.github.repos.get(context.repo({
-          headers: {
-            Accept: 'application/vnd.github.scarlet-witch-preview+json'
+        const repoData = await context.github.repos.get(context.repo())
+        // Only check for Code of Conduct for public, non-fork repos, since
+        // the community profile API only returns info for those repos
+        if (!repoData.data.private && !repoData.data.fork) {
+          const communityData = await context.github.repos.getCommunityProfileMetrics(context.repo())
+          if (communityData.data.code_of_conduct_file) {
+            codeOfConduct = Object.assign({}, communityData.data.code_of_conduct_file)
           }
-        }))
-        if (repoData.data.code_of_conduct) {
-          codeOfConduct = Object.assign({}, repoData.data.code_of_conduct)
         }
         const response = await app.perspective.analyze(body, { truncate: true })
         const toxicValue = response.attributeScores.TOXICITY.summaryScore.value
         // If the comment is toxic, comment the comment
         if (toxicValue >= toxicityThreshold) {
           let comment
-          if (codeOfConduct && codeOfConduct.name && codeOfConduct.url) {
-            comment = config.sentimentBotReplyComment + 'Keep in mind, this repository uses the [' + codeOfConduct.name + '](' + codeOfConduct.url + ').'
+          if (codeOfConduct && codeOfConduct.html_url) {
+            comment = config.sentimentBotReplyComment + 'Keep in mind, this repository has a [Code of Conduct](' + codeOfConduct.html_url + ').'
           } else {
             comment = config.sentimentBotReplyComment
           }
