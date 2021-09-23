@@ -1,6 +1,6 @@
 {
   "name": "sentiment-bot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Comment a link to a repo's code of conduct in response to toxic issue comments",
   "main": "index.js",
   "scripts": {
@@ -18,22 +18,17 @@
   },
   "homepage": "https://github.com/behaviorbot/sentiment-bot#readme",
   "dependencies": {
-    "express": "^4.16.3",
-    "js-yaml": "^3.9.0",
-    "perspective-api-client": "^2.0.0",
-    "probot": "^7.2.0",
-    "request": "^2.81.0"
+    "perspective-api-client": "sloria/perspective-api-client#c56db6481b37e8eaceaf7bf8735006b2032de0cd",
+    "probot": "^7.2.0"
   },
   "devDependencies": {
     "eslint-plugin-import": "^2.14.0",
     "expect": "^1.20.2",
-    "localtunnel": "^1.8.3",
-    "mocha": "^3.4.2",
+    "mocha": "^9.1.1",
     "standard": "^12.0.1"
   },
   "engines": {
-    "node": ">= 8.3.0",
-    "npm": ">= 5.3.0"
+    "node": ">= 14.17"
   },
   "standard": {
     "env": [
