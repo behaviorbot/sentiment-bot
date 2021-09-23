@@ -11,7 +11,7 @@ const createTestApp = ({ toxicity, isPrivate = false, isFork = false }) => {
 
   const github = {
     repos: {
-      getContent: expect.createSpy().andReturn(Promise.resolve({
+      getContents: expect.createSpy().andReturn(Promise.resolve({
         data: {
           content: Buffer.from(`
             sentimentBotToxicityThreshold: 0.3
@@ -78,7 +78,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -97,7 +97,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -118,7 +118,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -143,7 +143,7 @@ describe('sentiment-bot', () => {
       const perspective = app.perspective
       await app.receive(payload)
 
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
