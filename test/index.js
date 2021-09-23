@@ -11,7 +11,7 @@ const createTestApp = ({ toxicity, isPrivate = false, isFork = false }) => {
 
   const github = {
     repos: {
-      getContent: expect.createSpy().andReturn(Promise.resolve({
+      getContents: expect.createSpy().andReturn(Promise.resolve({
         data: {
           content: Buffer.from(`
             sentimentBotToxicityThreshold: 0.3
@@ -24,7 +24,7 @@ const createTestApp = ({ toxicity, isPrivate = false, isFork = false }) => {
           fork: isFork
         }
       })),
-      getCommunityProfileMetrics: expect.createSpy().andReturn(Promise.resolve({
+      retrieveCommunityProfileMetrics: expect.createSpy().andReturn(Promise.resolve({
         data: {
           code_of_conduct_file: Buffer.from(`
             url: https://api.github.com/repos/hiimbex/testing-things/contents/CODE_OF_CONDUCT.md,
@@ -78,7 +78,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -87,7 +87,7 @@ describe('sentiment-bot', () => {
         owner: 'hiimbex',
         repo: 'testing-things'
       })
-      expect(github.repos.getCommunityProfileMetrics).toNotHaveBeenCalled()
+      expect(github.repos.retrieveCommunityProfileMetrics).toNotHaveBeenCalled()
       expect(perspective.analyze).toHaveBeenCalled()
       expect(github.issues.createComment).toHaveBeenCalled()
     })
@@ -97,7 +97,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -106,7 +106,7 @@ describe('sentiment-bot', () => {
         owner: 'hiimbex',
         repo: 'testing-things'
       })
-      expect(github.repos.getCommunityProfileMetrics).toNotHaveBeenCalled()
+      expect(github.repos.retrieveCommunityProfileMetrics).toNotHaveBeenCalled()
       expect(perspective.analyze).toHaveBeenCalled()
       expect(github.issues.createComment).toHaveBeenCalled()
     })
@@ -118,7 +118,7 @@ describe('sentiment-bot', () => {
       const github = await app.auth()
       const perspective = app.perspective
       await app.receive(payload)
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -127,7 +127,7 @@ describe('sentiment-bot', () => {
         owner: 'hiimbex',
         repo: 'testing-things'
       })
-      expect(github.repos.getCommunityProfileMetrics).toHaveBeenCalledWith({
+      expect(github.repos.retrieveCommunityProfileMetrics).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things'
       })
@@ -143,7 +143,7 @@ describe('sentiment-bot', () => {
       const perspective = app.perspective
       await app.receive(payload)
 
-      expect(github.repos.getContent).toHaveBeenCalledWith({
+      expect(github.repos.getContents).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things',
         path: '.github/config.yml'
@@ -152,7 +152,7 @@ describe('sentiment-bot', () => {
         owner: 'hiimbex',
         repo: 'testing-things'
       })
-      expect(github.repos.getCommunityProfileMetrics).toHaveBeenCalledWith({
+      expect(github.repos.retrieveCommunityProfileMetrics).toHaveBeenCalledWith({
         owner: 'hiimbex',
         repo: 'testing-things'
       })

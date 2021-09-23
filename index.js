@@ -13,7 +13,7 @@ module.exports = app => {
         // Only check for Code of Conduct for public, non-fork repos, since
         // the community profile API only returns info for those repos
         if (!repoData.data.private && !repoData.data.fork) {
-          const communityData = await context.github.repos.getCommunityProfileMetrics(context.repo())
+          const communityData = await context.github.repos.retrieveCommunityProfileMetrics(context.repo())
           if (communityData.data.code_of_conduct_file) {
             codeOfConduct = Object.assign({}, communityData.data.code_of_conduct_file)
           }
