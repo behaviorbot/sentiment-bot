@@ -1,7 +1,7 @@
 name: probot-sentiment-bot
 on: [push]
 jobs:
-  probot-sentiment-bot:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
